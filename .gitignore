@@ -1,0 +1,32 @@
+# Credenciais — NUNCA commitar
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.pyc
+
+# Arquivos gerados / locais
+WinFast_Dashboard.html
+gerar_dashboard_local.py
+gerar_dashboard_web.py
+debug_players.py
+patch_cmp.py
+supabase_rls.sql
+
+# PDFs internos
+*.pdf
+
+# IDEs
+.idea/
+.vscode/
+
+# Claude
+.claude/
+
+# Pasta antiga
+Antigos/
+Med Usp/
+templates/
