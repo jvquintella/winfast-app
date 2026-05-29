@@ -661,11 +661,10 @@ function showGameSelector(rawRows,session){
   var gameTypes=allGames.map(function(r){return r.gametype||(r[SB_COL]||r.data||{}).gametype||'';});
   var compNames=allGames.map(function(r,i){
     var cn=r.competitionName||(r[SB_COL]||r.data||{}).competitionName||'';
-    return cn||gameTypes[i]||'Sem Competição';
+    return cn||gameTypes[i]||'Sem Competicao';
   });
   var myTeam=detectMyTeam(games);
   _gsSelected=games.map(function(){return true;});
-  // Agrupar por competitionName
   var groups={},groupOrder=[],groupType={};
   games.forEach(function(g,i){
     var key=compNames[i];
@@ -674,25 +673,14 @@ function showGameSelector(rawRows,session){
   });
   var container=document.getElementById('gs-cards');
   container.innerHTML=groupOrder.map(function(key){
-    var wins=groups[key].filter(function(i){
-      var g=games[i],teams=g.teams||[];
-      var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
-      if(ui<0)ui=0;
-      var u=teams[ui]||{},a=teams[1-ui]||{};
-      return (u.score||0)>(a.score||0);
-    }).length;
+    var wins=groups[key].filter(function(i){var g=games[i],teams=g.teams||[];var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});if(ui<0)ui=0;var u=teams[ui]||{},a=teams[1-ui]||{};return (u.score||0)>(a.score||0);}).length;
     var total=groups[key].length;
     var gt=groupType[key]||'';
-    var gtLower=(gt||'').toLowerCase();
-    var badgeCls=gtLower.indexOf('comp')>=0?'comp':'ami';
+    var badgeCls=(gt||'').toLowerCase().indexOf('comp')>=0?'comp':'ami';
     var badgeHtml=gt?'<span class="gs-gt-badge '+badgeCls+'">'+gt+'</span>':'';
-    var html='<div class="gs-section">';
-    html+='<div class="gs-section-title">'+key+badgeHtml
-      +'<span class="gs-section-count">'+wins+'V '+(total-wins)+'D &nbsp;·&nbsp; '+total+' jogo'+(total!==1?'s':'')+'</span></div>';
-    html+='<div class="gs-cards">';
+    var html='<div class="gs-section"><div class="gs-section-title">'+key+badgeHtml+'<span class="gs-section-count">'+wins+'V '+(total-wins)+'D &nbsp;&middot;&nbsp; '+total+' jogo'+(total!==1?'s':'')+'</span></div><div class="gs-cards">';
     html+=groups[key].map(function(i){
-      var g=games[i];
-      var teams=g.teams||[];
+      var g=games[i],teams=g.teams||[];
       var uspIdx=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
       if(uspIdx<0)uspIdx=0;
       var advIdx=1-uspIdx;
@@ -700,7 +688,7 @@ function showGameSelector(rawRows,session){
       var uspPts=usp.score||0,advPts=adv.score||0;
       var win=uspPts>advPts;
       var advName=(adv.name||'?').trim();
-      return '<div class="gs-card sel" data-i="'+i+'" onclick="toggleGameCard('+i+')" title="'+(win?'Vitória':'Derrota')+'">'\r\n        +'<div class="gs-chk" id="gs-chk-'+i+'"></div>'\r\n        +'<span class="gc-badge '+(win?'w':'l')+'">'+(win?'VITÓRIA':'DERROTA')+'</span>'\r\n        +'<div class="gc-adv">vs '+advName+'</div>'\r\n        +'<div class="gc-score"><span style="color:'+(win?'var(--gr)':'var(--rd)')+'">'+uspPts+'</span>'\r\n        +'<span style="color:var(--mu);font-size:14px;"> × </span>'\r\n        +'<span style="color:var(--tx);">'+advPts+'</span></div>'\r\n        +'<div class="gc-date">'+(g.date||'')+'</div>'\r\n        +'</div>';
+      return '<div class="gs-card sel" data-i="'+i+'" onclick="toggleGameCard('+i+')" title="'+(win?'Vitoria':'Derrota')+'"><div class="gs-chk" id="gs-chk-'+i+'"></div><span class="gc-badge '+(win?'w':'l')+'">'+(win?'VITORIA':'DERROTA')+'</span><div class="gc-adv">vs '+advName+'</div><div class="gc-score"><span style="color:'+(win?'var(--gr)':'var(--rd)')+'">'+ uspPts+'</span><span style="color:var(--mu);font-size:14px;"> x </span><span style="color:var(--tx);">'+ advPts+'</span></div><div class="gc-date">'+(g.date||'')+'</div></div>';
     }).join('');
     html+='</div></div>';
     return html;
