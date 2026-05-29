@@ -2061,9 +2061,7 @@ function initDashboard(){
   if(recEl&&GM.length){
     var wins=GM.filter(function(g){return g.resultado==='Vitória';}).length;
     var losses=GM.length-wins;
-    var teamName=(window._myTeamName||MY_TEAM||'').trim();
-    recEl.innerHTML=(teamName?'<span style="color:var(--usp);margin-right:8px;">'+teamName+'</span>':'')
-      +GM.length+' jogo'+(GM.length!==1?'s':'')
+    recEl.innerHTML=GM.length+' jogo'+(GM.length!==1?'s':'')
       +'&nbsp;·&nbsp;<span style="color:var(--gr)">'+wins+'V</span>'
       +' <span style="color:var(--rd)">'+losses+'D</span>';
   }
