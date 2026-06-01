@@ -104,6 +104,8 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
 .logout-wrap{display:flex;align-items:center;gap:10px;}
 .user-badge{font-size:11px;color:#9ca3af;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .logout-btn{background:none;border:1px solid var(--bd);color:var(--mu2);padding:5px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:'Barlow',sans-serif;letter-spacing:.5px;transition:all .2s;}
+.back-btn{background:none;border:1px solid var(--bd);color:var(--mu2);padding:5px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:'Barlow',sans-serif;letter-spacing:.5px;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.back-btn:hover{border-color:var(--usp);color:var(--usp);}
 .logout-btn:hover{border-color:#ef4444;color:#ef4444;}
 #app-container{display:none;}
 #game-selector{position:fixed;inset:0;background:var(--bg);z-index:9998;display:none;flex-direction:column;overflow-y:auto;}
@@ -228,6 +230,9 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
 <header>
   <div class="logo">WIN<span>FAST</span></div>
   <div></div>
+  <button class="back-btn" onclick="backToSelector()" title="Voltar para seleção de jogos">
+    &#8592; Selecionar jogos
+  </button>
   <button id="theme-toggle" onclick="toggleTheme()" title="Alternar tema" style="background:none;border:1px solid var(--bd);color:var(--mu2);border-radius:20px;padding:4px 12px;cursor:pointer;font-size:13px;font-family:'Barlow',sans-serif;transition:all .2s;white-space:nowrap;">🌙 Noturno</button>
   <div id="header-record" style="font-size:14px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:0.5px;"></div>
 <div class="logout-wrap"><span class="user-badge" id="user-badge"></span><button class="logout-btn" id="btn-logout">Sair</button></div></header>
@@ -2330,6 +2335,14 @@ function processGames(rawRows){
 }
 
 // ── INICIALIZAR DASHBOARD APÓS DADOS CARREGADOS ────────────────────────────────
+function backToSelector(){
+  document.getElementById('app-container').style.display='none';
+  document.getElementById('game-selector').style.display='flex';
+  // Re-renderizar seletor com dados ja em memoria
+  renderGsSections();
+  updateGsCount();
+}
+
 function initDashboard(){
   // Atualizar header com nome do time
   if(window._myTeamName){
