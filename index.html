@@ -137,6 +137,13 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
 .gs-cal-day.act{background:var(--usp)!important;color:#000!important;}
 .gs-cal-dots{display:flex;justify-content:center;gap:2px;margin-top:2px;flex-wrap:wrap;}
 .gs-cal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.gs-cal-day-games{border-top:1px solid var(--bd);margin-top:8px;padding-top:8px;}
+.gs-cal-day-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;color:var(--mu);text-transform:uppercase;margin-bottom:6px;}
+.gs-cal-game{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;cursor:pointer;transition:background .15s;border:1px solid var(--bd);margin-bottom:4px;background:var(--sf2);}
+.gs-cal-game:hover{background:var(--sf);border-color:var(--mu);}
+.gs-cal-chk{width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;transition:all .18s;margin-left:auto;background:var(--bg);}
+.gs-cal-chk.sel{background:var(--usp);border-color:var(--usp);}
+.gs-cal-chk.sel::after{content:'';display:block;width:5px;height:8px;border:2px solid #000;border-top:none;border-left:none;transform:rotate(45deg) translate(1px,-1px);margin:1px auto 0;}
 .gs-filter-count{font-size:11px;color:var(--mu);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;margin-left:auto;white-space:nowrap;}
 .gs-body{padding:24px 32px;max-width:1100px;margin:0 auto;width:100%;box-sizing:border-box;}
 #gs-cards{display:block;}
@@ -784,10 +791,10 @@ function buildGsPeriodMonths(){
   }).join('');
 }
 
-function showGsCalendar(monthKey){
-  _gsCalMonth=monthKey;_gsMonthFilter=monthKey;_gsDayFilter=null;
+function showGsCalendar(monthKey,keepDay){
+  _gsCalMonth=monthKey;_gsMonthFilter=monthKey;if(!keepDay)_gsDayFilter=null;
   var parts=monthKey.split('/'),mo=parseInt(parts[0],10),yr=parseInt(parts[1],10);
-  var games=_gsGamesCache,compNames=_gsCompNamesCache,dayMap={};
+  var games=_gsGamesCache,compNames=_gsCompNamesCache,myTeam=_gsMyTeamCache,dayMap={};
   games.forEach(function(g,i){
     var d=(g.date||'').split('/');
     if(d.length!==3||parseInt(d[1],10)!==mo||parseInt(d[2],10)!==yr)return;
@@ -806,6 +813,30 @@ function showGsCalendar(monthKey){
     html+='<div class="'+cls+'"'+(hasg?' onclick="setGsDay(\''+dayKey+'\')"':'')+'>'+d2+(hasg?'<div class="gs-cal-dots">'+dayMap[dd2].map(function(col){return '<div class="gs-cal-dot" style="background:'+col+';"></div>';}).join('')+'</div>':'')+'</div>';
   }
   html+='</div></div>';
+  // Mini-cards do dia selecionado
+  if(_gsDayFilter){
+    var dfp=_gsDayFilter.split('/'),dfDd=dfp[0],dfMo=dfp[1],dfYr=dfp[2];
+    var dayIdxs=[];
+    games.forEach(function(g,i){
+      var d=(g.date||'').split('/');
+      if(d[0]===dfDd&&d[1]===dfMo&&d[2]===dfYr)dayIdxs.push(i);
+    });
+    if(dayIdxs.length){
+      html+='<div class="gs-cal-day-games">';
+      html+='<div class="gs-cal-day-label">'+_gsDayFilter+'</div>';
+      html+=dayIdxs.map(function(i){
+        var g=games[i],teams=g.teams||[];
+        var uspIdx=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
+        if(uspIdx<0)uspIdx=0;
+        var adv=teams[1-uspIdx]||{},usp=teams[uspIdx]||{};
+        var uspPts=usp.score||0,advPts=adv.score||0,win=uspPts>advPts;
+        var advName=(adv.name||'?').trim(),isSel=!!_gsSelected[i];
+        var col=gsCompColor(compNames[i]);
+        return '<div class="gs-cal-game" onclick="toggleCalDayGame('+i+')">'+'<div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0;"></div>'+'<span class="gc-badge '+(win?'w':'l')+'" style="margin-bottom:0;padding:1px 6px;">'+(win?'V':'D')+'</span>'+'<span style="font-size:12px;color:var(--tx);flex:1;">vs '+advName+'</span>'+'<span style="font-family:\'Barlow Condensed\',sans-serif;font-weight:900;font-size:14px;color:'+(win?'var(--gr)':'var(--rd)')+'">'+uspPts+'<span style="color:var(--mu);font-size:10px;margin:0 2px;">x</span>'+advPts+'</span>'+'<div class="gs-cal-chk'+(isSel?' sel':'')+'"></div>'+'</div>';
+      }).join('');
+      html+='</div>';
+    }
+  }
   var dd3=document.getElementById('gs-period-dd');
   if(dd3){dd3.style.display='';dd3.innerHTML=html;}
   document.querySelectorAll('.gs-pills .gs-pill').forEach(function(p){p.classList.remove('active');});
@@ -813,11 +844,18 @@ function showGsCalendar(monthKey){
   renderGsSections();
 }
 
+function toggleCalDayGame(i){
+  _gsSelected[i]=!_gsSelected[i];
+  updateGsCount();
+  if(_gsCalMonth)showGsCalendar(_gsCalMonth,true);
+  renderGsSections();
+}
+
 function showGsPeriodMonths(){_gsCalMonth=null;var dd=document.getElementById('gs-period-dd');if(dd)dd.innerHTML=buildGsPeriodMonths();}
 
 function setGsDay(dayKey){
   _gsDayFilter=(_gsDayFilter===dayKey)?null:dayKey;
-  if(_gsCalMonth)showGsCalendar(_gsCalMonth);
+  if(_gsCalMonth)showGsCalendar(_gsCalMonth,true);
   renderGsSections();
 }
 
