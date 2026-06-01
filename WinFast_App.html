@@ -107,46 +107,62 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
 .logout-btn:hover{border-color:#ef4444;color:#ef4444;}
 #app-container{display:none;}
 #game-selector{position:fixed;inset:0;background:var(--bg);z-index:9998;display:none;flex-direction:column;overflow-y:auto;}
-.gs-header{background:var(--sf);border-bottom:2px solid var(--usp);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:2;}
-.gs-body{padding:28px 32px;max-width:1100px;margin:0 auto;width:100%;}
-.gs-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;margin-bottom:28px;}
-.gs-card{background:var(--sf);border:2px solid var(--bd);border-radius:10px;padding:16px;cursor:pointer;transition:all .18s;user-select:none;position:relative;}
-.gs-card:hover{border-color:var(--mu);}
-.gs-card.sel{border-color:var(--usp);background:rgba(245,197,24,0.05);}
-.gc-badge{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;letter-spacing:1px;padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:10px;}
-.gc-badge.w{background:rgba(34,197,94,.15);color:var(--gr);}
-.gc-badge.l{background:rgba(239,68,68,.15);color:var(--rd);}
-.gc-adv{font-weight:600;font-size:14px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx);}
-.gc-score{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:5px;line-height:1;}
-.gc-date{font-size:10px;color:var(--mu);letter-spacing:.5px;}
-#gs-cards{display:block!important;}
-.gs-section{margin-bottom:28px;}
-.gs-section-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--usp);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
-.gs-section-count{font-size:10px;color:var(--mu);font-weight:400;letter-spacing:.5px;text-transform:none;}
+.gs-topbar{background:var(--sf);border-bottom:2px solid var(--usp);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:3;}
+.gs-filterbar{background:var(--sf2);border-bottom:1px solid var(--bd);padding:10px 32px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:57px;z-index:2;}
+.gs-search-wrap{position:relative;flex:1;min-width:180px;max-width:300px;}
+.gs-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--mu);pointer-events:none;}
+.gs-search-input{background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:7px 12px 7px 30px;color:var(--tx);font-family:'Barlow',sans-serif;font-size:13px;width:100%;box-sizing:border-box;outline:none;transition:border-color .2s;}
+.gs-search-input:focus{border-color:var(--mu);}
+.gs-pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.gs-pill{background:none;border:1px solid var(--bd);color:var(--mu2);padding:5px 14px;border-radius:20px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;transition:all .18s;white-space:nowrap;}
+.gs-pill:hover{border-color:var(--mu);color:var(--tx);}
+.gs-pill.active{background:var(--usp);color:#000;border-color:var(--usp);}
+.gs-period-wrap{position:relative;}
+.gs-period-dd{position:absolute;top:calc(100% + 8px);left:0;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:6px;min-width:230px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.gs-period-mi{padding:8px 12px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--tx);font-weight:600;letter-spacing:.5px;transition:background .15s;}
+.gs-period-mi:hover{background:var(--sf2);}
+.gs-period-mi.active{color:var(--usp);}
+.gs-cal{padding:4px;}
+.gs-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px;}
+.gs-cal-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:1px;color:var(--tx);text-transform:uppercase;}
+.gs-cal-nb{background:none;border:none;color:var(--mu);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:4px;transition:color .15s;}
+.gs-cal-nb:hover{color:var(--tx);}
+.gs-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.gs-cal-dow{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--mu);text-align:center;padding:3px 0;font-weight:700;}
+.gs-cal-day{text-align:center;padding:3px 1px;border-radius:5px;min-height:32px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--mu2);cursor:default;}
+.gs-cal-day.hg{color:var(--tx);cursor:pointer;}
+.gs-cal-day.hg:hover{background:var(--sf2);}
+.gs-cal-day.act{background:var(--usp)!important;color:#000!important;}
+.gs-cal-dots{display:flex;justify-content:center;gap:2px;margin-top:2px;flex-wrap:wrap;}
+.gs-cal-dot{width:5px;height:5px;border-radius:50%;}
+.gs-filter-count{font-size:11px;color:var(--mu);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;margin-left:auto;white-space:nowrap;}
+.gs-body{padding:24px 32px;max-width:1100px;margin:0 auto;width:100%;box-sizing:border-box;}
+#gs-cards{display:block;}
+.gs-section{margin-bottom:32px;}
+.gs-section-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.gs-section-count{font-size:10px;font-weight:400;letter-spacing:.5px;text-transform:none;opacity:.7;}
 .gs-gt-badge{font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:3px;text-transform:uppercase;margin-left:8px;}
 .gs-gt-badge.comp{background:rgba(59,130,246,.15);color:var(--bl);}
 .gs-gt-badge.ami{background:rgba(107,114,128,.15);color:var(--mu2);}
-.gs-month-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bd);}
-.gs-month-card{background:var(--sf);border:2px solid var(--bd);border-radius:8px;padding:10px 14px;cursor:pointer;transition:all .18s;text-align:center;min-width:72px;user-select:none;}
-.gs-month-card:hover{border-color:var(--mu);}
-.gs-month-card.active{border-color:var(--usp);background:rgba(245,197,24,0.08);}
-.gm-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;letter-spacing:1px;color:var(--tx);}
-.gm-year{font-size:9px;color:var(--mu);letter-spacing:1px;margin-top:1px;}
-.gm-stats{font-size:9px;color:var(--mu2);margin-top:3px;}
-#gs-cards{display:block!important;}
-.gs-section{margin-bottom:28px;}
-.gs-section-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--usp);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
-.gs-section-count{font-size:10px;color:var(--mu);font-weight:400;letter-spacing:.5px;text-transform:none;}
-.gs-chk{position:absolute;top:12px;right:12px;width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);transition:all .18s;}
+.gs-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;}
+.gs-card{background:var(--sf);border:2px solid var(--bd);border-radius:10px;padding:16px;cursor:pointer;transition:all .18s;user-select:none;position:relative;}
+.gs-card:hover{border-color:var(--mu);}
+.gs-card.sel{border-color:var(--usp);}
+.gs-chk{position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;border:2px solid var(--bd);transition:all .18s;background:var(--bg);}
 .gs-card.sel .gs-chk{background:var(--usp);border-color:var(--usp);}
-.gs-card.sel .gs-chk::after{content:'';display:block;width:5px;height:9px;border:2px solid #000;border-top:none;border-left:none;transform:rotate(45deg) translate(1px,-1px);margin:1px auto;}
-.gs-btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.gs-card.sel .gs-chk::after{content:'';display:block;width:6px;height:10px;border:2px solid #000;border-top:none;border-left:none;transform:rotate(45deg) translate(1px,-1px);margin:2px auto 0;}
+.gc-badge{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;letter-spacing:1px;padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:10px;}
+.gc-badge.w{background:rgba(34,197,94,.15);color:var(--gr);}
+.gc-badge.l{background:rgba(239,68,68,.15);color:var(--rd);}
+.gc-adv{font-weight:600;font-size:13px;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx);}
+.gc-score{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;margin-bottom:6px;line-height:1;}
+.gc-date{font-size:10px;color:var(--mu);letter-spacing:.5px;}
 .gs-action-btn{background:none;border:1px solid var(--bd);color:var(--mu2);padding:6px 14px;border-radius:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:all .18s;}
 .gs-action-btn:hover{border-color:var(--mu);color:var(--tx);}
 #gs-count{font-size:12px;color:var(--mu);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;}
 #gs-gen-btn{background:var(--usp);color:#000;border:none;border-radius:8px;padding:14px 40px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;gap:10px;}
 #gs-gen-btn:hover{opacity:.85;}#gs-gen-btn:disabled{opacity:.4;cursor:default;}
-@media(max-width:768px){.gs-header{padding:14px 16px;}.gs-body{padding:16px;}}
+@media(max-width:768px){.gs-topbar{padding:12px 16px;}.gs-filterbar{padding:8px 16px;}.gs-body{padding:16px;}}
 
 </style>
 </head>
@@ -170,67 +186,43 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
 </div>
 <!-- ── SELETOR DE JOGOS ───────────────────────────────────────── -->
 <div id="game-selector">
-  <div class="gs-header">
+  <!-- barra superior -->
+  <div class="gs-topbar">
     <div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:2px;color:var(--usp);">WIN<span style="color:var(--tx);">FAST</span></div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:2px;color:var(--usp);">WIN<span style="color:var(--tx);">FAST</span></div>
       <div style="font-size:10px;color:var(--mu);letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Selecione os jogos para analisar</div>
     </div>
-    <div class="gs-btn-row">
+    <div style="display:flex;align-items:center;gap:10px;">
       <button class="gs-action-btn" onclick="selectAllGames()">Todos</button>
       <button class="gs-action-btn" onclick="clearAllGames()">Nenhum</button>
       <span id="gs-count">0 selecionados</span>
     </div>
   </div>
+  <!-- barra de filtros -->
+  <div class="gs-filterbar">
+    <div class="gs-search-wrap">
+      <svg class="gs-search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="17" y2="17"/></svg>
+      <input type="text" id="gs-search" class="gs-search-input" placeholder="Buscar adversario ou competicao..." oninput="applyGsFilters()">
+    </div>
+    <div class="gs-pills">
+      <button class="gs-pill active" id="gspill-all" onclick="setGsQuick('all',this)">TODAS</button>
+      <button class="gs-pill" id="gspill-w" onclick="setGsQuick('w',this)">VITORIAS</button>
+      <button class="gs-pill" id="gspill-l" onclick="setGsQuick('l',this)">DERROTAS</button>
+      <div class="gs-period-wrap" id="gs-period-wrap">
+        <button class="gs-pill" id="gspill-period" onclick="toggleGsPeriod(event)">&#128197; PERIODO &#9662;</button>
+        <div id="gs-period-dd" class="gs-period-dd" style="display:none;"></div>
+      </div>
+    </div>
+    <div id="gs-filter-count" class="gs-filter-count"></div>
+  </div>
+  <!-- area de cards -->
   <div class="gs-body">
-    <div id="gs-month-filter" class="gs-month-filter"></div>
-    <div id="gs-cards" class="gs-cards"></div>
-    <div style="display:flex;justify-content:center;padding-bottom:32px;">
+    <div id="gs-cards"></div>
+    <div style="display:flex;justify-content:center;padding:24px 0 48px;">
       <button id="gs-gen-btn" onclick="generateReport()" disabled>
-        Gerar Relatório &nbsp;&#8594;
+        Gerar Relatorio &nbsp;&#8594;
       </button>
     </div>
-  </div>
-</div>
-
-<div id="app-container">
-
-<header>
-  <div class="logo">WIN<span>FAST</span></div>
-  <div></div>
-  <button id="theme-toggle" onclick="toggleTheme()" title="Alternar tema" style="background:none;border:1px solid var(--bd);color:var(--mu2);border-radius:20px;padding:4px 12px;cursor:pointer;font-size:13px;font-family:'Barlow',sans-serif;transition:all .2s;white-space:nowrap;">🌙 Noturno</button>
-  <div id="header-record" style="font-size:14px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:0.5px;"></div>
-<div class="logout-wrap"><span class="user-badge" id="user-badge"></span><button class="logout-btn" id="btn-logout">Sair</button></div></header>
-<nav class="top-nav">
-  <button class="active" onclick="showTop('jogos',this)">Jogos</button>
-  <button onclick="showTop('temporada',this)">Temporada</button>
-  <button onclick="showTop('longitudinal',this)">Longitudinal</button>
-  <button onclick="showTop('shotchart',this)">Shot Chart</button>
-  <button onclick="showTop('comparar',this)">Comparar</button>
-  <button onclick="showTop('jogador',this)">Jogador</button>
-  <button onclick="showTop('quinteto',this)">Quinteto Ideal</button>
-</nav>
-<div id="tooltip" class="tt"></div>
-
-<div id="pg-jogos" class="page active">
-  <div class="sec-row"><div class="sec-title">Jogos da Temporada</div><div class="game-list" id="game-list"></div></div>
-  <div id="game-detail" style="display:none;margin-top:24px;">
-    <div class="inner-tabs">
-      <button class="itab active" onclick="showInner('gd-resumo',this)">Resumo</button>
-      <button class="itab" onclick="showInner('gd-stats',this)">Jogadores</button>
-      <button class="itab" onclick="showInner('gd-tl',this)">Pontuação</button>
-    </div>
-    <div id="gd-resumo" class="ipage active"></div>
-    <div id="gd-stats" class="ipage"></div>
-    <div id="gd-tl" class="ipage">
-    <div class="cpanel" style="margin-bottom:14px;">
-      <div class="panel-title" style="margin-bottom:10px;">Pontuação por Quarto</div>
-      <canvas id="qtr-canvas" style="width:100%;height:200px;display:block;"></canvas>
-    </div>
-    <div class="cpanel">
-      <div class="panel-title" style="margin-bottom:4px;">Evolução do Placar</div>
-      <canvas id="tl-canvas" style="width:100%;height:240px;display:block;cursor:crosshair;"></canvas>
-    </div>
-  </div>
   </div>
 </div>
 
@@ -660,60 +652,27 @@ function renderTC(){var labels=TLG.map(function(g){return 'J'+g.jogo_id+' '+g.ad
 var _gsRawRows=[];
 var _gsSession=null;
 var _gsSelected=[];
-
-var _gsMonthFilter=null;
 var _gsGamesCache=[];
 var _gsCompNamesCache=[];
 var _gsGameTypesCache=[];
 var _gsMyTeamCache='';
-
+var _gsQuickFilter='all';
+var _gsSearchText='';
+var _gsMonthFilter=null;
+var _gsDayFilter=null;
+var _gsCalMonth=null;
+var _gsCompColorMap={};
 var GS_MONTHS=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+var GS_MONTHS_FULL=['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var GS_DOW=['D','S','T','Q','Q','S','S'];
+var GS_PALETTE=['#f5c518','#3b82f6','#a855f7','#f97316','#14b8a6','#ec4899','#84cc16','#fb923c'];
 
-function setGsMonth(key){
-  _gsMonthFilter=(key==='all')?null:key;
-  document.querySelectorAll('.gs-month-card').forEach(function(c){c.classList.toggle('active',c.dataset.month===(key||'all'));});
-  renderGsSections();
-}
-
-function renderGsSections(){
-  var games=_gsGamesCache,compNames=_gsCompNamesCache,gameTypes=_gsGameTypesCache,myTeam=_gsMyTeamCache;
-  var indices=games.map(function(_,i){return i;});
-  if(_gsMonthFilter){
-    indices=indices.filter(function(i){
-      var d=(games[i].date||'').split('/');
-      return d.length===3&&(d[1]+'/'+d[2])===_gsMonthFilter;
-    });
+function gsCompColor(name){
+  if(!_gsCompColorMap[name]){
+    var idx=Object.keys(_gsCompColorMap).length % GS_PALETTE.length;
+    _gsCompColorMap[name]=GS_PALETTE[idx];
   }
-  var groups={},groupOrder=[],groupType={};
-  indices.forEach(function(i){
-    var key=compNames[i];
-    if(!groups[key]){groups[key]=[];groupOrder.push(key);groupType[key]=gameTypes[i];}
-    groups[key].push(i);
-  });
-  var container=document.getElementById('gs-cards');
-  if(!groupOrder.length){container.innerHTML='<div style="text-align:center;color:var(--mu);padding:48px 0;font-family:\'Barlow Condensed\',sans-serif;font-size:16px;">Nenhum jogo neste periodo</div>';return;}
-  container.innerHTML=groupOrder.map(function(key){
-    var wins=groups[key].filter(function(i){var g=games[i],teams=g.teams||[];var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});if(ui<0)ui=0;var u=teams[ui]||{},a=teams[1-ui]||{};return (u.score||0)>(a.score||0);}).length;
-    var total=groups[key].length;
-    var gt=groupType[key]||'';
-    var badgeCls=(gt||'').toLowerCase().indexOf('comp')>=0?'comp':'ami';
-    var badgeHtml=gt?'<span class="gs-gt-badge '+badgeCls+'">'+gt+'</span>':'';
-    var html='<div class="gs-section"><div class="gs-section-title">'+key+badgeHtml+'<span class="gs-section-count">'+wins+'V '+(total-wins)+'D &nbsp;&middot;&nbsp; '+total+' jogo'+(total!==1?'s':'')+'</span></div><div class="gs-cards">';
-    html+=groups[key].map(function(i){
-      var g=games[i],teams=g.teams||[];
-      var uspIdx=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
-      if(uspIdx<0)uspIdx=0;
-      var advIdx=1-uspIdx;
-      var usp=teams[uspIdx]||{},adv=teams[advIdx]||{};
-      var uspPts=usp.score||0,advPts=adv.score||0;
-      var win=uspPts>advPts;
-      var advName=(adv.name||'?').trim();
-      var sel=_gsSelected[i]?'sel':'';
-      return '<div class="gs-card '+sel+'" data-i="'+i+'" onclick="toggleGameCard('+i+')" title="'+(win?'Vitoria':'Derrota')+'">'+'<div class="gs-chk" id="gs-chk-'+i+'"></div>'+'<span class="gc-badge '+(win?'w':'l')+'">'+(win?'VITORIA':'DERROTA')+'</span>'+'<div class="gc-adv">vs '+advName+'</div>'+'<div class="gc-score"><span style="color:'+(win?'var(--gr)':'var(--rd)')+'">'+uspPts+'</span><span style="color:var(--mu);font-size:14px;"> x </span><span style="color:var(--tx);">'+advPts+'</span></div>'+'<div class="gc-date">'+(g.date||'')+'</div>'+'</div>';
-    }).join('');
-    html+='</div></div>';
-    return html;
-  }).join('');
+  return _gsCompColorMap[name];
 }
 
 function showGameSelector(rawRows,session){
@@ -726,39 +685,201 @@ function showGameSelector(rawRows,session){
   var myTeam=detectMyTeam(games);
   _gsGamesCache=games;_gsCompNamesCache=compNames;_gsGameTypesCache=gameTypes;_gsMyTeamCache=myTeam;
   _gsSelected=games.map(function(){return true;});
-  _gsMonthFilter=null;
-  // ── Construir filtro de meses ──
-  var monthMap={};
-  games.forEach(function(g,i){
+  _gsQuickFilter='all';_gsSearchText='';_gsMonthFilter=null;_gsDayFilter=null;_gsCalMonth=null;
+  _gsCompColorMap={};
+  // pre-assign competition colors in order of appearance
+  compNames.forEach(function(n){gsCompColor(n);});
+  document.getElementById('login-overlay').style.display='none';
+  document.getElementById('game-selector').style.display='flex';
+  renderGsSections();
+  updateGsCount();
+}
+
+function applyGsFilters(){
+  var el=document.getElementById('gs-search');
+  _gsSearchText=el?el.value.toLowerCase():'';
+  renderGsSections();
+}
+
+function setGsQuick(f,btn){
+  _gsQuickFilter=f;
+  _gsMonthFilter=null;_gsDayFilter=null;_gsCalMonth=null;
+  closeGsPeriod();
+  document.querySelectorAll('.gs-pills .gs-pill').forEach(function(p){p.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  renderGsSections();
+}
+
+function toggleGsPeriod(e){
+  if(e)e.stopPropagation();
+  var dd=document.getElementById('gs-period-dd');
+  if(!dd)return;
+  if(dd.style.display==='none'||!dd.style.display){
+    _gsCalMonth=null;
+    dd.innerHTML=buildGsPeriodMonths();
+    dd.style.display='';
+  } else {
+    dd.style.display='none';
+  }
+}
+
+function closeGsPeriod(){
+  var dd=document.getElementById('gs-period-dd');
+  if(dd)dd.style.display='none';
+}
+
+function buildGsPeriodMonths(){
+  var games=_gsGamesCache,myTeam=_gsMyTeamCache;
+  var mmap={};
+  games.forEach(function(g){
     var d=(g.date||'').split('/');
     if(d.length!==3)return;
     var key=d[1]+'/'+d[2];
-    if(!monthMap[key]){monthMap[key]={wins:0,total:0,mo:parseInt(d[1],10),yr:parseInt(d[2],10)};}
+    if(!mmap[key])mmap[key]={wins:0,total:0,mo:parseInt(d[1],10),yr:parseInt(d[2],10)};
     var teams=g.teams||[];
     var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
     if(ui<0)ui=0;
     var u=teams[ui]||{},a=teams[1-ui]||{};
-    if((u.score||0)>(a.score||0))monthMap[key].wins++;
-    monthMap[key].total++;
+    if((u.score||0)>(a.score||0))mmap[key].wins++;
+    mmap[key].total++;
   });
-  var sortedMonths=Object.keys(monthMap).sort(function(a,b){var ma=monthMap[a],mb=monthMap[b];return ma.yr!==mb.yr?ma.yr-mb.yr:ma.mo-mb.mo;});
-  var mfEl=document.getElementById('gs-month-filter');
-  if(mfEl&&sortedMonths.length>1){
-    var html='<div class="gs-month-card active" data-month="all" onclick="setGsMonth(\'all\')"><div class="gm-name">Todos</div><div class="gm-stats">'+games.length+' jogo'+(games.length!==1?'s':'')+'</div></div>';
-    html+=sortedMonths.map(function(k){
-      var m=monthMap[k];
-      var mname=GS_MONTHS[m.mo-1]||k;
-      return '<div class="gs-month-card" data-month="'+k+'" onclick="setGsMonth(\''+k+'\')">'+'<div class="gm-name">'+mname.toUpperCase()+'</div>'+'<div class="gm-year">'+m.yr+'</div>'+'<div class="gm-stats">'+m.wins+'V '+(m.total-m.wins)+'D</div>'+'</div>';
-    }).join('');
-    mfEl.style.display='';
-    mfEl.innerHTML=html;
-  } else if(mfEl){
-    mfEl.style.display='none';
+  var sorted=Object.keys(mmap).sort(function(a,b){var ma=mmap[a],mb=mmap[b];return ma.yr!==mb.yr?ma.yr-mb.yr:ma.mo-mb.mo;});
+  return sorted.map(function(k){
+    var m=mmap[k];
+    var name=(GS_MONTHS_FULL[m.mo-1]||k)+' '+m.yr;
+    var cls='gs-period-mi'+(_gsCalMonth===k?' active':'');
+    return '<div class="'+cls+'" onclick="showGsCalendar(\''+k+'\')">'+'<span>'+name+'</span>'+'<span style="color:var(--mu);font-size:11px;">'+m.wins+'V '+(m.total-m.wins)+'D &middot; '+m.total+'j</span>'+'</div>';
+  }).join('');
+}
+
+function showGsCalendar(monthKey){
+  _gsCalMonth=monthKey;
+  _gsMonthFilter=monthKey;
+  _gsDayFilter=null;
+  var parts=monthKey.split('/');
+  var mo=parseInt(parts[0],10),yr=parseInt(parts[1],10);
+  var games=_gsGamesCache,compNames=_gsCompNamesCache;
+  var dayMap={};
+  games.forEach(function(g,i){
+    var d=(g.date||'').split('/');
+    if(d.length!==3||parseInt(d[1],10)!==mo||parseInt(d[2],10)!==yr)return;
+    var dd=d[0];
+    if(!dayMap[dd])dayMap[dd]=[];
+    var col=gsCompColor(compNames[i]);
+    if(dayMap[dd].indexOf(col)<0)dayMap[dd].push(col);
+  });
+  var firstDow=new Date(yr,mo-1,1).getDay();
+  var daysInMo=new Date(yr,mo,0).getDate();
+  var mname=(GS_MONTHS_FULL[mo-1]||monthKey)+' '+yr;
+  var html='<div class="gs-cal">';
+  html+='<div class="gs-cal-nav">';
+  html+='<button class="gs-cal-nb" onclick="showGsPeriodMonths()">&#8592; Meses</button>';
+  html+='<span class="gs-cal-title">'+GS_MONTHS[mo-1]+' '+yr+'</span>';
+  html+='<button class="gs-cal-nb" onclick="clearGsPeriod()" title="Limpar">&#215;</button>';
+  html+='</div>';
+  html+='<div class="gs-cal-grid">';
+  GS_DOW.forEach(function(d){html+='<div class="gs-cal-dow">'+d+'</div>';});
+  for(var e=0;e<firstDow;e++)html+='<div class="gs-cal-day"></div>';
+  for(var d=1;d<=daysInMo;d++){
+    var dd=String(d).padStart(2,'0');
+    var dayKey=dd+'/'+parts[0]+'/'+yr;
+    var hasg=!!dayMap[dd];
+    var isAct=_gsDayFilter===dayKey;
+    var cls='gs-cal-day'+(hasg?' hg':'')+(isAct?' act':'');
+    html+='<div class="'+cls+'"'+(hasg?' onclick="setGsDay(\''+dayKey+'\')"':'')+'>';
+    html+='<div>'+d+'</div>';
+    if(hasg){
+      html+='<div class="gs-cal-dots">';
+      dayMap[dd].forEach(function(col){html+='<div class="gs-cal-dot" style="background:'+col+';"></div>';});
+      html+='</div>';
+    }
+    html+='</div>';
   }
+  html+='</div></div>';
+  var dd2=document.getElementById('gs-period-dd');
+  if(dd2){dd2.style.display='';dd2.innerHTML=html;}
+  // ativar pill de periodo
+  document.querySelectorAll('.gs-pills .gs-pill').forEach(function(p){p.classList.remove('active');});
+  var pb=document.getElementById('gspill-period');
+  if(pb)pb.classList.add('active');
   renderGsSections();
-  updateGsCount();
-  document.getElementById('login-overlay').style.display='none';
-  document.getElementById('game-selector').style.display='flex';
+}
+
+function showGsPeriodMonths(){
+  _gsCalMonth=null;
+  var dd=document.getElementById('gs-period-dd');
+  if(dd)dd.innerHTML=buildGsPeriodMonths();
+}
+
+function setGsDay(dayKey){
+  _gsDayFilter=(_gsDayFilter===dayKey)?null:dayKey;
+  if(_gsCalMonth)showGsCalendar(_gsCalMonth);
+  renderGsSections();
+}
+
+function clearGsPeriod(){
+  _gsDayFilter=null;_gsMonthFilter=null;_gsCalMonth=null;
+  closeGsPeriod();
+  document.querySelectorAll('.gs-pills .gs-pill').forEach(function(p){p.classList.remove('active');});
+  var ab=document.getElementById('gspill-all');
+  if(ab){ab.classList.add('active');_gsQuickFilter='all';}
+  renderGsSections();
+}
+
+function renderGsSections(){
+  var games=_gsGamesCache,compNames=_gsCompNamesCache,gameTypes=_gsGameTypesCache,myTeam=_gsMyTeamCache;
+  var search=(_gsSearchText||'').toLowerCase();
+  var indices=games.map(function(_,i){return i;}).filter(function(i){
+    var g=games[i],teams=g.teams||[];
+    var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
+    if(ui<0)ui=0;
+    var u=teams[ui]||{},a=teams[1-ui]||{};
+    var win=(u.score||0)>(a.score||0);
+    if(_gsQuickFilter==='w'&&!win)return false;
+    if(_gsQuickFilter==='l'&&win)return false;
+    if(_gsDayFilter){if((g.date||'')!==_gsDayFilter)return false;}
+    else if(_gsMonthFilter){var d=(g.date||'').split('/');if(d.length!==3||(d[1]+'/'+d[2])!==_gsMonthFilter)return false;}
+    if(search){var adv=(a.name||'').toLowerCase(),comp=(compNames[i]||'').toLowerCase();if(adv.indexOf(search)<0&&comp.indexOf(search)<0)return false;}
+    return true;
+  });
+  var groups={},groupOrder=[],groupType={};
+  indices.forEach(function(i){var key=compNames[i];if(!groups[key]){groups[key]=[];groupOrder.push(key);groupType[key]=gameTypes[i];}groups[key].push(i);});
+  var container=document.getElementById('gs-cards');
+  if(!groupOrder.length){
+    container.innerHTML='<div style="text-align:center;color:var(--mu);padding:60px 0;font-family:\'Barlow Condensed\',sans-serif;font-size:15px;">Nenhum jogo encontrado</div>';
+    updateGsFilterCount(0,games.length);return;
+  }
+  container.innerHTML=groupOrder.map(function(key){
+    var wins=groups[key].filter(function(i){var g=games[i],teams=g.teams||[];var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});if(ui<0)ui=0;var u=teams[ui]||{},a=teams[1-ui]||{};return (u.score||0)>(a.score||0);}).length;
+    var total=groups[key].length;
+    var gt=groupType[key]||'';
+    var badgeCls=(gt||'').toLowerCase().indexOf('comp')>=0?'comp':'ami';
+    var badgeHtml=gt?'<span class="gs-gt-badge '+badgeCls+'">'+gt+'</span>':'';
+    var col=gsCompColor(key);
+    var html='<div class="gs-section"><div class="gs-section-title" style="color:'+col+';border-bottom:1px solid '+col+'33;">'+key+badgeHtml+'<span class="gs-section-count">'+wins+'V '+(total-wins)+'D &nbsp;&middot;&nbsp; '+total+' jogo'+(total!==1?'s':'')+'</span></div><div class="gs-cards-grid">';
+    html+=groups[key].map(function(i){
+      var g=games[i],teams=g.teams||[];
+      var uspIdx=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
+      if(uspIdx<0)uspIdx=0;
+      var adv=teams[1-uspIdx]||{},usp=teams[uspIdx]||{};
+      var uspPts=usp.score||0,advPts=adv.score||0;
+      var win=uspPts>advPts;
+      var advName=(adv.name||'?').trim();
+      var sel=_gsSelected[i]?'sel':'';
+      return '<div class="gs-card '+sel+'" data-i="'+i+'" onclick="toggleGameCard('+i+')"><div class="gs-chk" id="gs-chk-'+i+'"></div><span class="gc-badge '+(win?'w':'l')+'">'+(win?'VITORIA':'DERROTA')+'</span><div class="gc-adv">vs '+advName+'</div><div class="gc-score"><span style="color:'+(win?'var(--gr)':'var(--rd)')+'">'+uspPts+'</span><span style="color:var(--mu);font-size:16px;margin:0 4px;">×</span><span style="color:var(--tx);">'+advPts+'</span></div><div class="gc-date">'+(g.date||'')+'</div></div>';
+    }).join('');
+    html+='</div></div>';
+    return html;
+  }).join('');
+  updateGsFilterCount(indices.length,games.length);
+}
+
+function updateGsFilterCount(shown,total){
+  var el=document.getElementById('gs-filter-count');
+  if(!el)return;
+  var s=shown!==undefined?shown:_gsGamesCache.length;
+  var t=total!==undefined?total:_gsGamesCache.length;
+  el.textContent=s+' de '+t+' jogo'+(t!==1?'s':'');
 }
 
 function toggleGameCard(i){
@@ -799,7 +920,14 @@ function generateReport(){
   if(badge)badge.textContent=email;
   processGames(selected);
 }
+
+// fechar dropdown ao clicar fora
+document.addEventListener('click',function(e){
+  var wrap=document.getElementById('gs-period-wrap');
+  if(wrap&&!wrap.contains(e.target))closeGsPeriod();
+});
 /* ─────────────────────────────────────────────────────────────── */
+
 function refreshCmpSelectors(){var p=document.getElementById('lp-sel').value;var gids=GM.map(function(g){return g.id;}).filter(function(gid){return LD[p]&&LD[p][gid];});var selA=document.getElementById('pl-cmp-a');var selB=document.getElementById('pl-cmp-b');if(!selA||!selB)return;var prevA=selA.value,prevB=selB.value;selA.innerHTML='';selB.innerHTML='';gids.forEach(function(gid){var tg=TLG.find(function(g){return g.jogo_id===gid;})||{};var lbl='J'+gid+' vs '+(tg.adv||'?');var oA=document.createElement('option');oA.value=gid;oA.textContent=lbl;selA.appendChild(oA);var oB=document.createElement('option');oB.value=gid;oB.textContent=lbl;selB.appendChild(oB);});if(gids.map(String).indexOf(String(prevA))>=0)selA.value=prevA;else if(gids.length>0)selA.value=gids[0];if(gids.map(String).indexOf(String(prevB))>=0)selB.value=prevB;else if(gids.length>=1)selB.value=gids[gids.length-1];}
 function renderPL(){var p=document.getElementById('lp-sel').value;var metric=document.getElementById('lm-sel').value;if(!p||!LD[p])return;var labels=GM.map(function(g){return 'J'+g.id+' vs '+g.adv;});
   // Métricas avançadas individuais por jogo
