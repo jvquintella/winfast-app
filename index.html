@@ -186,7 +186,6 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
 </div>
 <!-- ── SELETOR DE JOGOS ───────────────────────────────────────── -->
 <div id="game-selector">
-  <!-- barra superior -->
   <div class="gs-topbar">
     <div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:2px;color:var(--usp);">WIN<span style="color:var(--tx);">FAST</span></div>
@@ -198,7 +197,6 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
       <span id="gs-count">0 selecionados</span>
     </div>
   </div>
-  <!-- barra de filtros -->
   <div class="gs-filterbar">
     <div class="gs-search-wrap">
       <svg class="gs-search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="17" y2="17"/></svg>
@@ -215,7 +213,6 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
     </div>
     <div id="gs-filter-count" class="gs-filter-count"></div>
   </div>
-  <!-- area de cards -->
   <div class="gs-body">
     <div id="gs-cards"></div>
     <div style="display:flex;justify-content:center;padding:24px 0 48px;">
@@ -223,6 +220,48 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
         Gerar Relatorio &nbsp;&#8594;
       </button>
     </div>
+  </div>
+</div>
+
+<div id="app-container">
+
+<header>
+  <div class="logo">WIN<span>FAST</span></div>
+  <div></div>
+  <button id="theme-toggle" onclick="toggleTheme()" title="Alternar tema" style="background:none;border:1px solid var(--bd);color:var(--mu2);border-radius:20px;padding:4px 12px;cursor:pointer;font-size:13px;font-family:'Barlow',sans-serif;transition:all .2s;white-space:nowrap;">🌙 Noturno</button>
+  <div id="header-record" style="font-size:14px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:0.5px;"></div>
+<div class="logout-wrap"><span class="user-badge" id="user-badge"></span><button class="logout-btn" id="btn-logout">Sair</button></div></header>
+<nav class="top-nav">
+  <button class="active" onclick="showTop('jogos',this)">Jogos</button>
+  <button onclick="showTop('temporada',this)">Temporada</button>
+  <button onclick="showTop('longitudinal',this)">Longitudinal</button>
+  <button onclick="showTop('shotchart',this)">Shot Chart</button>
+  <button onclick="showTop('comparar',this)">Comparar</button>
+  <button onclick="showTop('jogador',this)">Jogador</button>
+  <button onclick="showTop('quinteto',this)">Quinteto Ideal</button>
+</nav>
+<div id="tooltip" class="tt"></div>
+
+<div id="pg-jogos" class="page active">
+  <div class="sec-row"><div class="sec-title">Jogos da Temporada</div><div class="game-list" id="game-list"></div></div>
+  <div id="game-detail" style="display:none;margin-top:24px;">
+    <div class="inner-tabs">
+      <button class="itab active" onclick="showInner('gd-resumo',this)">Resumo</button>
+      <button class="itab" onclick="showInner('gd-stats',this)">Jogadores</button>
+      <button class="itab" onclick="showInner('gd-tl',this)">Pontuação</button>
+    </div>
+    <div id="gd-resumo" class="ipage active"></div>
+    <div id="gd-stats" class="ipage"></div>
+    <div id="gd-tl" class="ipage">
+    <div class="cpanel" style="margin-bottom:14px;">
+      <div class="panel-title" style="margin-bottom:10px;">Pontuação por Quarto</div>
+      <canvas id="qtr-canvas" style="width:100%;height:200px;display:block;"></canvas>
+    </div>
+    <div class="cpanel">
+      <div class="panel-title" style="margin-bottom:4px;">Evolução do Placar</div>
+      <canvas id="tl-canvas" style="width:100%;height:240px;display:block;cursor:crosshair;"></canvas>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -668,10 +707,7 @@ var GS_DOW=['D','S','T','Q','Q','S','S'];
 var GS_PALETTE=['#f5c518','#3b82f6','#a855f7','#f97316','#14b8a6','#ec4899','#84cc16','#fb923c'];
 
 function gsCompColor(name){
-  if(!_gsCompColorMap[name]){
-    var idx=Object.keys(_gsCompColorMap).length % GS_PALETTE.length;
-    _gsCompColorMap[name]=GS_PALETTE[idx];
-  }
+  if(!_gsCompColorMap[name]){var idx=Object.keys(_gsCompColorMap).length%GS_PALETTE.length;_gsCompColorMap[name]=GS_PALETTE[idx];}
   return _gsCompColorMap[name];
 }
 
@@ -687,7 +723,6 @@ function showGameSelector(rawRows,session){
   _gsSelected=games.map(function(){return true;});
   _gsQuickFilter='all';_gsSearchText='';_gsMonthFilter=null;_gsDayFilter=null;_gsCalMonth=null;
   _gsCompColorMap={};
-  // pre-assign competition colors in order of appearance
   compNames.forEach(function(n){gsCompColor(n);});
   document.getElementById('login-overlay').style.display='none';
   document.getElementById('game-selector').style.display='flex';
@@ -714,13 +749,8 @@ function toggleGsPeriod(e){
   if(e)e.stopPropagation();
   var dd=document.getElementById('gs-period-dd');
   if(!dd)return;
-  if(dd.style.display==='none'||!dd.style.display){
-    _gsCalMonth=null;
-    dd.innerHTML=buildGsPeriodMonths();
-    dd.style.display='';
-  } else {
-    dd.style.display='none';
-  }
+  if(dd.style.display==='none'||!dd.style.display){_gsCalMonth=null;dd.innerHTML=buildGsPeriodMonths();dd.style.display='';}
+  else{dd.style.display='none';}
 }
 
 function closeGsPeriod(){
@@ -729,15 +759,13 @@ function closeGsPeriod(){
 }
 
 function buildGsPeriodMonths(){
-  var games=_gsGamesCache,myTeam=_gsMyTeamCache;
-  var mmap={};
+  var games=_gsGamesCache,myTeam=_gsMyTeamCache,mmap={};
   games.forEach(function(g){
     var d=(g.date||'').split('/');
     if(d.length!==3)return;
     var key=d[1]+'/'+d[2];
     if(!mmap[key])mmap[key]={wins:0,total:0,mo:parseInt(d[1],10),yr:parseInt(d[2],10)};
-    var teams=g.teams||[];
-    var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
+    var teams=g.teams||[],ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
     if(ui<0)ui=0;
     var u=teams[ui]||{},a=teams[1-ui]||{};
     if((u.score||0)>(a.score||0))mmap[key].wins++;
@@ -745,71 +773,42 @@ function buildGsPeriodMonths(){
   });
   var sorted=Object.keys(mmap).sort(function(a,b){var ma=mmap[a],mb=mmap[b];return ma.yr!==mb.yr?ma.yr-mb.yr:ma.mo-mb.mo;});
   return sorted.map(function(k){
-    var m=mmap[k];
-    var name=(GS_MONTHS_FULL[m.mo-1]||k)+' '+m.yr;
+    var m=mmap[k],name=(GS_MONTHS_FULL[m.mo-1]||k)+' '+m.yr;
     var cls='gs-period-mi'+(_gsCalMonth===k?' active':'');
     return '<div class="'+cls+'" onclick="showGsCalendar(\''+k+'\')">'+'<span>'+name+'</span>'+'<span style="color:var(--mu);font-size:11px;">'+m.wins+'V '+(m.total-m.wins)+'D &middot; '+m.total+'j</span>'+'</div>';
   }).join('');
 }
 
 function showGsCalendar(monthKey){
-  _gsCalMonth=monthKey;
-  _gsMonthFilter=monthKey;
-  _gsDayFilter=null;
-  var parts=monthKey.split('/');
-  var mo=parseInt(parts[0],10),yr=parseInt(parts[1],10);
-  var games=_gsGamesCache,compNames=_gsCompNamesCache;
-  var dayMap={};
+  _gsCalMonth=monthKey;_gsMonthFilter=monthKey;_gsDayFilter=null;
+  var parts=monthKey.split('/'),mo=parseInt(parts[0],10),yr=parseInt(parts[1],10);
+  var games=_gsGamesCache,compNames=_gsCompNamesCache,dayMap={};
   games.forEach(function(g,i){
     var d=(g.date||'').split('/');
     if(d.length!==3||parseInt(d[1],10)!==mo||parseInt(d[2],10)!==yr)return;
-    var dd=d[0];
+    var dd=d[0],col=gsCompColor(compNames[i]);
     if(!dayMap[dd])dayMap[dd]=[];
-    var col=gsCompColor(compNames[i]);
     if(dayMap[dd].indexOf(col)<0)dayMap[dd].push(col);
   });
-  var firstDow=new Date(yr,mo-1,1).getDay();
-  var daysInMo=new Date(yr,mo,0).getDate();
-  var mname=(GS_MONTHS_FULL[mo-1]||monthKey)+' '+yr;
-  var html='<div class="gs-cal">';
-  html+='<div class="gs-cal-nav">';
-  html+='<button class="gs-cal-nb" onclick="showGsPeriodMonths()">&#8592; Meses</button>';
-  html+='<span class="gs-cal-title">'+GS_MONTHS[mo-1]+' '+yr+'</span>';
-  html+='<button class="gs-cal-nb" onclick="clearGsPeriod()" title="Limpar">&#215;</button>';
-  html+='</div>';
-  html+='<div class="gs-cal-grid">';
+  var firstDow=new Date(yr,mo-1,1).getDay(),daysInMo=new Date(yr,mo,0).getDate();
+  var html='<div class="gs-cal"><div class="gs-cal-nav"><button class="gs-cal-nb" onclick="showGsPeriodMonths()">&#8592; Meses</button><span class="gs-cal-title">'+GS_MONTHS[mo-1]+' '+yr+'</span><button class="gs-cal-nb" onclick="clearGsPeriod()" title="Limpar">&#215;</button></div><div class="gs-cal-grid">';
   GS_DOW.forEach(function(d){html+='<div class="gs-cal-dow">'+d+'</div>';});
   for(var e=0;e<firstDow;e++)html+='<div class="gs-cal-day"></div>';
-  for(var d=1;d<=daysInMo;d++){
-    var dd=String(d).padStart(2,'0');
-    var dayKey=dd+'/'+parts[0]+'/'+yr;
-    var hasg=!!dayMap[dd];
-    var isAct=_gsDayFilter===dayKey;
+  for(var d2=1;d2<=daysInMo;d2++){
+    var dd2=String(d2).padStart(2,'0'),dayKey=dd2+'/'+parts[0]+'/'+yr;
+    var hasg=!!dayMap[dd2],isAct=_gsDayFilter===dayKey;
     var cls='gs-cal-day'+(hasg?' hg':'')+(isAct?' act':'');
-    html+='<div class="'+cls+'"'+(hasg?' onclick="setGsDay(\''+dayKey+'\')"':'')+'>';
-    html+='<div>'+d+'</div>';
-    if(hasg){
-      html+='<div class="gs-cal-dots">';
-      dayMap[dd].forEach(function(col){html+='<div class="gs-cal-dot" style="background:'+col+';"></div>';});
-      html+='</div>';
-    }
-    html+='</div>';
+    html+='<div class="'+cls+'"'+(hasg?' onclick="setGsDay(\''+dayKey+'\')"':'')+'>'+d2+(hasg?'<div class="gs-cal-dots">'+dayMap[dd2].map(function(col){return '<div class="gs-cal-dot" style="background:'+col+';"></div>';}).join('')+'</div>':'')+'</div>';
   }
   html+='</div></div>';
-  var dd2=document.getElementById('gs-period-dd');
-  if(dd2){dd2.style.display='';dd2.innerHTML=html;}
-  // ativar pill de periodo
+  var dd3=document.getElementById('gs-period-dd');
+  if(dd3){dd3.style.display='';dd3.innerHTML=html;}
   document.querySelectorAll('.gs-pills .gs-pill').forEach(function(p){p.classList.remove('active');});
-  var pb=document.getElementById('gspill-period');
-  if(pb)pb.classList.add('active');
+  var pb=document.getElementById('gspill-period');if(pb)pb.classList.add('active');
   renderGsSections();
 }
 
-function showGsPeriodMonths(){
-  _gsCalMonth=null;
-  var dd=document.getElementById('gs-period-dd');
-  if(dd)dd.innerHTML=buildGsPeriodMonths();
-}
+function showGsPeriodMonths(){_gsCalMonth=null;var dd=document.getElementById('gs-period-dd');if(dd)dd.innerHTML=buildGsPeriodMonths();}
 
 function setGsDay(dayKey){
   _gsDayFilter=(_gsDayFilter===dayKey)?null:dayKey;
@@ -818,11 +817,9 @@ function setGsDay(dayKey){
 }
 
 function clearGsPeriod(){
-  _gsDayFilter=null;_gsMonthFilter=null;_gsCalMonth=null;
-  closeGsPeriod();
+  _gsDayFilter=null;_gsMonthFilter=null;_gsCalMonth=null;closeGsPeriod();
   document.querySelectorAll('.gs-pills .gs-pill').forEach(function(p){p.classList.remove('active');});
-  var ab=document.getElementById('gspill-all');
-  if(ab){ab.classList.add('active');_gsQuickFilter='all';}
+  var ab=document.getElementById('gspill-all');if(ab){ab.classList.add('active');_gsQuickFilter='all';}
   renderGsSections();
 }
 
@@ -830,11 +827,9 @@ function renderGsSections(){
   var games=_gsGamesCache,compNames=_gsCompNamesCache,gameTypes=_gsGameTypesCache,myTeam=_gsMyTeamCache;
   var search=(_gsSearchText||'').toLowerCase();
   var indices=games.map(function(_,i){return i;}).filter(function(i){
-    var g=games[i],teams=g.teams||[];
-    var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
+    var g=games[i],teams=g.teams||[],ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
     if(ui<0)ui=0;
-    var u=teams[ui]||{},a=teams[1-ui]||{};
-    var win=(u.score||0)>(a.score||0);
+    var u=teams[ui]||{},a=teams[1-ui]||{},win=(u.score||0)>(a.score||0);
     if(_gsQuickFilter==='w'&&!win)return false;
     if(_gsQuickFilter==='l'&&win)return false;
     if(_gsDayFilter){if((g.date||'')!==_gsDayFilter)return false;}
@@ -845,40 +840,29 @@ function renderGsSections(){
   var groups={},groupOrder=[],groupType={};
   indices.forEach(function(i){var key=compNames[i];if(!groups[key]){groups[key]=[];groupOrder.push(key);groupType[key]=gameTypes[i];}groups[key].push(i);});
   var container=document.getElementById('gs-cards');
-  if(!groupOrder.length){
-    container.innerHTML='<div style="text-align:center;color:var(--mu);padding:60px 0;font-family:\'Barlow Condensed\',sans-serif;font-size:15px;">Nenhum jogo encontrado</div>';
-    updateGsFilterCount(0,games.length);return;
-  }
+  if(!groupOrder.length){container.innerHTML='<div style="text-align:center;color:var(--mu);padding:60px 0;">Nenhum jogo encontrado</div>';updateGsFilterCount(0,games.length);return;}
   container.innerHTML=groupOrder.map(function(key){
     var wins=groups[key].filter(function(i){var g=games[i],teams=g.teams||[];var ui=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});if(ui<0)ui=0;var u=teams[ui]||{},a=teams[1-ui]||{};return (u.score||0)>(a.score||0);}).length;
-    var total=groups[key].length;
-    var gt=groupType[key]||'';
+    var total=groups[key].length,gt=groupType[key]||'';
     var badgeCls=(gt||'').toLowerCase().indexOf('comp')>=0?'comp':'ami';
     var badgeHtml=gt?'<span class="gs-gt-badge '+badgeCls+'">'+gt+'</span>':'';
     var col=gsCompColor(key);
     var html='<div class="gs-section"><div class="gs-section-title" style="color:'+col+';border-bottom:1px solid '+col+'33;">'+key+badgeHtml+'<span class="gs-section-count">'+wins+'V '+(total-wins)+'D &nbsp;&middot;&nbsp; '+total+' jogo'+(total!==1?'s':'')+'</span></div><div class="gs-cards-grid">';
     html+=groups[key].map(function(i){
-      var g=games[i],teams=g.teams||[];
-      var uspIdx=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
+      var g=games[i],teams=g.teams||[],uspIdx=teams.findIndex(function(t){return (t.name||'').trim()===myTeam.trim();});
       if(uspIdx<0)uspIdx=0;
-      var adv=teams[1-uspIdx]||{},usp=teams[uspIdx]||{};
-      var uspPts=usp.score||0,advPts=adv.score||0;
-      var win=uspPts>advPts;
-      var advName=(adv.name||'?').trim();
-      var sel=_gsSelected[i]?'sel':'';
-      return '<div class="gs-card '+sel+'" data-i="'+i+'" onclick="toggleGameCard('+i+')"><div class="gs-chk" id="gs-chk-'+i+'"></div><span class="gc-badge '+(win?'w':'l')+'">'+(win?'VITORIA':'DERROTA')+'</span><div class="gc-adv">vs '+advName+'</div><div class="gc-score"><span style="color:'+(win?'var(--gr)':'var(--rd)')+'">'+uspPts+'</span><span style="color:var(--mu);font-size:16px;margin:0 4px;">×</span><span style="color:var(--tx);">'+advPts+'</span></div><div class="gc-date">'+(g.date||'')+'</div></div>';
+      var adv=teams[1-uspIdx]||{},usp=teams[uspIdx]||{},uspPts=usp.score||0,advPts=adv.score||0;
+      var win=uspPts>advPts,advName=(adv.name||'?').trim(),sel=_gsSelected[i]?'sel':'';
+      return '<div class="gs-card '+sel+'" data-i="'+i+'" onclick="toggleGameCard('+i+')"><div class="gs-chk" id="gs-chk-'+i+'"></div><span class="gc-badge '+(win?'w':'l')+'">'+(win?'VITORIA':'DERROTA')+'</span><div class="gc-adv">vs '+advName+'</div><div class="gc-score"><span style="color:'+(win?'var(--gr)':'var(--rd)')+'">'+ uspPts+'</span><span style="color:var(--mu);font-size:16px;margin:0 4px;">x</span><span style="color:var(--tx);">'+ advPts+'</span></div><div class="gc-date">'+(g.date||'')+'</div></div>';
     }).join('');
-    html+='</div></div>';
-    return html;
+    html+='</div></div>';return html;
   }).join('');
   updateGsFilterCount(indices.length,games.length);
 }
 
 function updateGsFilterCount(shown,total){
-  var el=document.getElementById('gs-filter-count');
-  if(!el)return;
-  var s=shown!==undefined?shown:_gsGamesCache.length;
-  var t=total!==undefined?total:_gsGamesCache.length;
+  var el=document.getElementById('gs-filter-count');if(!el)return;
+  var s=shown!==undefined?shown:_gsGamesCache.length,t=total!==undefined?total:_gsGamesCache.length;
   el.textContent=s+' de '+t+' jogo'+(t!==1?'s':'');
 }
 
@@ -889,24 +873,13 @@ function toggleGameCard(i){
   updateGsCount();
 }
 
-function selectAllGames(){
-  _gsSelected=_gsSelected.map(function(){return true;});
-  renderGsSections();
-  updateGsCount();
-}
-
-function clearAllGames(){
-  _gsSelected=_gsSelected.map(function(){return false;});
-  renderGsSections();
-  updateGsCount();
-}
+function selectAllGames(){_gsSelected=_gsSelected.map(function(){return true;});renderGsSections();updateGsCount();}
+function clearAllGames(){_gsSelected=_gsSelected.map(function(){return false;});renderGsSections();updateGsCount();}
 
 function updateGsCount(){
   var n=_gsSelected.filter(Boolean).length;
-  var el=document.getElementById('gs-count');
-  if(el)el.textContent=n+' jogo'+(n!==1?'s':'')+' selecionado'+(n!==1?'s':'');
-  var btn=document.getElementById('gs-gen-btn');
-  if(btn)btn.disabled=n===0;
+  var el=document.getElementById('gs-count');if(el)el.textContent=n+' jogo'+(n!==1?'s':'')+' selecionado'+(n!==1?'s':'');
+  var btn=document.getElementById('gs-gen-btn');if(btn)btn.disabled=n===0;
 }
 
 function generateReport(){
@@ -916,12 +889,10 @@ function generateReport(){
   if(!selected.length)return;
   document.getElementById('game-selector').style.display='none';
   var email=(_gsSession&&_gsSession.user&&_gsSession.user.email)||'';
-  var badge=document.getElementById('user-badge');
-  if(badge)badge.textContent=email;
+  var badge=document.getElementById('user-badge');if(badge)badge.textContent=email;
   processGames(selected);
 }
 
-// fechar dropdown ao clicar fora
 document.addEventListener('click',function(e){
   var wrap=document.getElementById('gs-period-wrap');
   if(wrap&&!wrap.contains(e.target))closeGsPeriod();
