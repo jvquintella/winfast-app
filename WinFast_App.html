@@ -118,7 +118,7 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
 .gs-pill:hover{border-color:var(--mu);color:var(--tx);}
 .gs-pill.active{background:var(--usp);color:#000;border-color:var(--usp);}
 .gs-period-wrap{position:relative;}
-.gs-period-dd{position:absolute;top:calc(100% + 8px);left:0;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:6px;min-width:230px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.gs-period-dd{position:absolute;top:calc(100% + 8px);left:0;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:8px;min-width:240px;width:max-content;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.5);}
 .gs-period-mi{padding:8px 12px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--tx);font-weight:600;letter-spacing:.5px;transition:background .15s;}
 .gs-period-mi:hover{background:var(--sf2);}
 .gs-period-mi.active{color:var(--usp);}
@@ -127,14 +127,14 @@ td:first-child{text-align:left;font-weight:500;}tr:last-child td{border-bottom:n
 .gs-cal-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:1px;color:var(--tx);text-transform:uppercase;}
 .gs-cal-nb{background:none;border:none;color:var(--mu);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:4px;transition:color .15s;}
 .gs-cal-nb:hover{color:var(--tx);}
-.gs-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.gs-cal-grid{display:grid;grid-template-columns:repeat(7,32px);gap:2px;}
 .gs-cal-dow{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--mu);text-align:center;padding:3px 0;font-weight:700;}
-.gs-cal-day{text-align:center;padding:3px 1px;border-radius:5px;min-height:32px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--mu2);cursor:default;}
+.gs-cal-day{text-align:center;padding:4px 2px;border-radius:5px;min-height:36px;font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--mu2);cursor:default;}
 .gs-cal-day.hg{color:var(--tx);cursor:pointer;}
 .gs-cal-day.hg:hover{background:var(--sf2);}
 .gs-cal-day.act{background:var(--usp)!important;color:#000!important;}
 .gs-cal-dots{display:flex;justify-content:center;gap:2px;margin-top:2px;flex-wrap:wrap;}
-.gs-cal-dot{width:5px;height:5px;border-radius:50%;}
+.gs-cal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .gs-filter-count{font-size:11px;color:var(--mu);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;margin-left:auto;white-space:nowrap;}
 .gs-body{padding:24px 32px;max-width:1100px;margin:0 auto;width:100%;box-sizing:border-box;}
 #gs-cards{display:block;}
@@ -895,7 +895,11 @@ function generateReport(){
 
 document.addEventListener('click',function(e){
   var wrap=document.getElementById('gs-period-wrap');
-  if(wrap&&!wrap.contains(e.target))closeGsPeriod();
+  if(!wrap)return;
+  // composedPath captura o caminho ANTES de qualquer mutacao do DOM
+  var path=e.composedPath?e.composedPath():[];
+  var inside=path.indexOf(wrap)>=0||wrap.contains(e.target);
+  if(!inside)closeGsPeriod();
 });
 /* ─────────────────────────────────────────────────────────────── */
 
