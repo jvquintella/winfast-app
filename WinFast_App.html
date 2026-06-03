@@ -2362,33 +2362,37 @@ function processGames(rawRows){
         fg3m:fg3m,fg3a:fg3a,fg3pct:pctCalc(fg3m,fg3a),
         ftm:ftm,fta:fta,ftpct:pctCalc(ftm,fta),pir:pirCalc(p),pm:p.plusMinus||0};
       if(!PLRQPT[pn])PLRQPT[pn]={};
-      // Computar pontos por quarto:
-      //   FGs: usar SHOTS (dados precisos com quarto registrado)
-      //   FTs: distribuir p.ftm proporcional ao timePerQuarter do jogador
-      var qtFG=[0,0,0,0];
-      var qmapLocal={'1Q':0,'2Q':1,'3Q':2,'4Q':3};
-      SHOTS.forEach(function(s){
-        if(s.Atleta!==pn||s.jogo_id!==gidN||s.Convertido!=='Sim')return;
-        var qiS=qmapLocal[s.Quarto];
-        if(qiS!==undefined)qtFG[qiS]+=(s.Tipo==='3pts'?3:2);
-      });
-      var ftm2=p.ftm||0;
-      var tpq=p.timePerQuarter||[];
-      var totT=tpq.reduce(function(s,t){return s+(t||0);},0);
-      var qtFT=[0,0,0,0];
-      if(ftm2>0){
-        if(totT>0){
-          // Proporcional ao tempo jogado por quarto
-          var rem2=ftm2;
-          for(var qi3=0;qi3<3;qi3++){qtFT[qi3]=Math.floor(ftm2*(tpq[qi3]||0)/totT);rem2-=qtFT[qi3];}
-          qtFT[3]=rem2;
+      // Base: pontos do log (FGs atribuidos + eventuais FTs atribuidos)
+      var qFromLog=(qpts[pn]||[0,0,0,0]).slice();
+      var logTotal=qFromLog.reduce(function(s,v){return s+v;},0);
+      // missing = LLs nao atribuidos no log (p.pts ja inclui ftm)
+      var missing=Math.max(0,(p.pts||0)-logTotal);
+      if(missing>0){
+        // Distribuir os LLs faltantes proporcional aos FGs ja registrados por quarto
+        // (proxy de quando o jogador estava ativo/sendo fouled)
+        var fgQ=[0,0,0,0];
+        var qmapL={'1Q':0,'2Q':1,'3Q':2,'4Q':3};
+        SHOTS.forEach(function(s){
+          if(s.Atleta!==pn||s.jogo_id!==gidN||s.Convertido!=='Sim')return;
+          var qi4=qmapL[s.Quarto];
+          if(qi4!==undefined)fgQ[qi4]+=(s.Tipo==='3pts'?3:2);
+        });
+        var fgTotal=fgQ.reduce(function(s,v){return s+v;},0);
+        if(fgTotal>0){
+          // Proporcional aos FGs por quarto
+          var rem=missing;
+          for(var qi3=0;qi3<3;qi3++){
+            var sh=Math.floor(missing*fgQ[qi3]/fgTotal);
+            qFromLog[qi3]+=sh;rem-=sh;
+          }
+          qFromLog[3]+=rem;
         } else {
-          // Sem timePerQuarter: distribuir igualmente
-          var base=Math.floor(ftm2/4),extra=ftm2%4;
-          for(var qi3=0;qi3<4;qi3++)qtFT[qi3]=base+(qi3<extra?1:0);
+          // Sem FGs no log: distribuir igualmente pelos 4 quartos
+          var base=Math.floor(missing/4),extra=missing%4;
+          for(var qi3=0;qi3<4;qi3++)qFromLog[qi3]+=base+(qi3<extra?1:0);
         }
       }
-      PLRQPT[pn][gidS]=qtFG.map(function(v,i){return v+qtFT[i];});
+      PLRQPT[pn][gidS]=qFromLog;
     });
 
     // ── Longitudinal do time (TLG) ────────────────────────────────────────────
