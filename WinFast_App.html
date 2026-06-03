@@ -1086,6 +1086,29 @@ function renderOffDef(name,t,gids){
     };
     cv.onmouseleave=function(){document.getElementById('tooltip').style.opacity='0';};
   })();
+  // Nota de LLs nao distribuidos por quarto
+  (function(){
+    var chartSum=qTotals.reduce(function(s,v){return s+v;},0);
+    var missingLL=t.pts-chartSum;
+    var noteId='plr-qft-note';
+    var noteEl=document.getElementById(noteId);
+    if(!noteEl){
+      noteEl=document.createElement('div');
+      noteEl.id=noteId;
+      var cv3=document.getElementById('plr-qchart');
+      if(cv3&&cv3.parentElement)cv3.parentElement.appendChild(noteEl);
+    }
+    if(noteEl){
+      if(missingLL>0){
+        noteEl.innerHTML='<span style="color:var(--usp);">+'+missingLL+' pt'+(missingLL>1?'s':'')+'</span>'
+          +' de LL não distribuídos por quarto';
+        noteEl.style.cssText='font-size:10px;color:var(--mu);text-align:center;margin-top:5px;'
+          +'font-family:Barlow Condensed,sans-serif;letter-spacing:.5px;display:block;';
+      } else {
+        noteEl.style.display='none';
+      }
+    }
+  })();
   // Zonas ofensivas
   var plrSh=SHOTS.filter(function(s){return s.Atleta===name&&(plrG===0||s.jogo_id===plrG);});
   var zn={near:{l:'Perto da Cesta',a:0,m:0,p:2},mid:{l:'Média Distância',a:0,m:0,p:2},three:{l:'3 Pontos',a:0,m:0,p:3}};
@@ -2294,7 +2317,7 @@ function processGames(rawRows){
       var pname=stripPfx(ev.player||'');
       var qi=qIdx[ev.q]!==undefined?qIdx[ev.q]:0;
       var el=elapsedEv(ev);
-      if(ev.team===uspTeamName){
+      if((ev.team||'').trim()===uspTeamName.trim()){
         us+=pts;uspTl.push({t:el,pts:us});
         if(!qpts[pname])qpts[pname]=[0,0,0,0];
         qpts[pname][qi]+=pts;
@@ -2303,19 +2326,6 @@ function processGames(rawRows){
     if(uspTl[uspTl.length-1].t<2400)uspTl.push({t:2400,pts:us});
     if(advTl[advTl.length-1].t<2400)advTl.push({t:2400,pts:as_});
     TL[gidS]={usp:uspTl,adv:advTl};
-    // Rastrear eventos de 1pt sem player no time USP (sao os LLs nao atribuidos)
-    var knownPlrSet={};
-    (uspTeam.players||[]).forEach(function(pl){knownPlrSet[stripPfx(pl.name)]=true;});
-    var unattrib1ptQ=[0,0,0,0];
-    log.forEach(function(ev){
-      if((ev.pts||0)!==1)return;
-      if((ev.team||'')!==uspTeamName)return;
-      var pn2=stripPfx(ev.player||'');
-      if(!knownPlrSet[pn2]){
-        var qi2=qIdx[ev.q]!==undefined?qIdx[ev.q]:0;
-        unattrib1ptQ[qi2]++;
-      }
-    });
 
     // ── Shots ─────────────────────────────────────────────────────────────────
     (uspTeam.players||[]).forEach(function(p){
@@ -2362,37 +2372,7 @@ function processGames(rawRows){
         fg3m:fg3m,fg3a:fg3a,fg3pct:pctCalc(fg3m,fg3a),
         ftm:ftm,fta:fta,ftpct:pctCalc(ftm,fta),pir:pirCalc(p),pm:p.plusMinus||0};
       if(!PLRQPT[pn])PLRQPT[pn]={};
-      // Base: pontos do log (FGs atribuidos + eventuais FTs atribuidos)
-      var qFromLog=(qpts[pn]||[0,0,0,0]).slice();
-      var logTotal=qFromLog.reduce(function(s,v){return s+v;},0);
-      // missing = LLs nao atribuidos no log (p.pts ja inclui ftm)
-      var missing=Math.max(0,(p.pts||0)-logTotal);
-      if(missing>0){
-        // Distribuir os LLs faltantes proporcional aos FGs ja registrados por quarto
-        // (proxy de quando o jogador estava ativo/sendo fouled)
-        var fgQ=[0,0,0,0];
-        var qmapL={'1Q':0,'2Q':1,'3Q':2,'4Q':3};
-        SHOTS.forEach(function(s){
-          if(s.Atleta!==pn||s.jogo_id!==gidN||s.Convertido!=='Sim')return;
-          var qi4=qmapL[s.Quarto];
-          if(qi4!==undefined)fgQ[qi4]+=(s.Tipo==='3pts'?3:2);
-        });
-        var fgTotal=fgQ.reduce(function(s,v){return s+v;},0);
-        if(fgTotal>0){
-          // Proporcional aos FGs por quarto
-          var rem=missing;
-          for(var qi3=0;qi3<3;qi3++){
-            var sh=Math.floor(missing*fgQ[qi3]/fgTotal);
-            qFromLog[qi3]+=sh;rem-=sh;
-          }
-          qFromLog[3]+=rem;
-        } else {
-          // Sem FGs no log: distribuir igualmente pelos 4 quartos
-          var base=Math.floor(missing/4),extra=missing%4;
-          for(var qi3=0;qi3<4;qi3++)qFromLog[qi3]+=base+(qi3<extra?1:0);
-        }
-      }
-      PLRQPT[pn][gidS]=qFromLog;
+      PLRQPT[pn][gidS]=qpts[pn]||[0,0,0,0];
     });
 
     // ── Longitudinal do time (TLG) ────────────────────────────────────────────
