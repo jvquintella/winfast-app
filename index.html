@@ -2303,6 +2303,19 @@ function processGames(rawRows){
     if(uspTl[uspTl.length-1].t<2400)uspTl.push({t:2400,pts:us});
     if(advTl[advTl.length-1].t<2400)advTl.push({t:2400,pts:as_});
     TL[gidS]={usp:uspTl,adv:advTl};
+    // Rastrear eventos de 1pt sem player no time USP (sao os LLs nao atribuidos)
+    var knownPlrSet={};
+    (uspTeam.players||[]).forEach(function(pl){knownPlrSet[stripPfx(pl.name)]=true;});
+    var unattrib1ptQ=[0,0,0,0];
+    log.forEach(function(ev){
+      if((ev.pts||0)!==1)return;
+      if((ev.team||'')!==uspTeamName)return;
+      var pn2=stripPfx(ev.player||'');
+      if(!knownPlrSet[pn2]){
+        var qi2=qIdx[ev.q]!==undefined?qIdx[ev.q]:0;
+        unattrib1ptQ[qi2]++;
+      }
+    });
 
     // ── Shots ─────────────────────────────────────────────────────────────────
     (uspTeam.players||[]).forEach(function(p){
@@ -2349,28 +2362,42 @@ function processGames(rawRows){
         fg3m:fg3m,fg3a:fg3a,fg3pct:pctCalc(fg3m,fg3a),
         ftm:ftm,fta:fta,ftpct:pctCalc(ftm,fta),pir:pirCalc(p),pm:p.plusMinus||0};
       if(!PLRQPT[pn])PLRQPT[pn]={};
-      // Corrigir qpts: LL (lances livres) muitas vezes nao aparecem no log com player
-      // atribuido, entao suplementamos a diferenca usando timePerQuarter do jogador
+      // Corrigir qpts: LL nao atribuidos no log — usar distribuicao dos eventos
+      // de 1pt sem player como peso por quarto
       var qFromLog=(qpts[pn]||[0,0,0,0]).slice();
       var logTotal=qFromLog.reduce(function(s,v){return s+v;},0);
       var missing=Math.max(0,(p.pts||0)-logTotal);
       if(missing>0){
-        var tpq=p.timePerQuarter||[];
-        var totalT=tpq.reduce(function(s,t){return s+(t||0);},0);
-        if(totalT>0){
-          // distribuir proporcionalmente ao tempo por quarto
+        var unattribTotal=unattrib1ptQ.reduce(function(s,v){return s+v;},0);
+        var share=[0,0,0,0];
+        if(unattribTotal>0){
+          // Distribuir proporcional aos eventos de LL nao atribuidos por quarto
           var rem=missing;
-          var share=tpq.map(function(t){return Math.floor(missing*(t||0)/totalT);});
-          rem-=share.reduce(function(s,v){return s+v;},0);
-          // resto: dar ao quarto com maior fracao
-          var fracs=tpq.map(function(t,i){return {i:i,f:missing*(t||0)/totalT-share[i]};});
-          fracs.sort(function(a,b){return b.f-a.f;});
-          for(var ri=0;ri<rem;ri++)share[fracs[ri].i]++;
-          for(var qi2=0;qi2<4;qi2++)qFromLog[qi2]=(qFromLog[qi2]||0)+(share[qi2]||0);
+          for(var qi3=0;qi3<4;qi3++){
+            share[qi3]=(qi3<3)?Math.floor(missing*unattrib1ptQ[qi3]/unattribTotal):rem;
+            rem-=share[qi3];
+          }
+          // Ajuste de arredondamento: resto vai ao quarto com mais eventos
+          if(rem>0){
+            var maxQ=0;
+            for(var qi3=1;qi3<4;qi3++)if(unattrib1ptQ[qi3]>unattrib1ptQ[maxQ])maxQ=qi3;
+            share[maxQ]+=rem;
+          }
         } else {
-          // sem dados de tempo por quarto: somar tudo no Q1
-          qFromLog[0]+=missing;
+          // Sem eventos de LL no log: usar timePerQuarter ou distribuir pelo Q1
+          var tpq=p.timePerQuarter||[];
+          var totalT=tpq.reduce(function(s,t){return s+(t||0);},0);
+          if(totalT>0){
+            var rem2=missing;
+            for(var qi3=0;qi3<4;qi3++){
+              share[qi3]=(qi3<3)?Math.floor(missing*(tpq[qi3]||0)/totalT):rem2;
+              rem2-=share[qi3];
+            }
+          } else {
+            share[0]=missing;
+          }
         }
+        for(var qi3=0;qi3<4;qi3++)qFromLog[qi3]+=(share[qi3]||0);
       }
       PLRQPT[pn][gidS]=qFromLog;
     });
