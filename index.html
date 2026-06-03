@@ -2402,7 +2402,8 @@ function processGames(rawRows){
     QUINT_DATA[gidS]=computeQuintDataJS(game,uspTeamName);
   });
 
-  PLS=Object.keys(plsSet).sort();
+  // Filtrar nomes invalidos (so numeros, vazio, ou muito curtos)
+  PLS=Object.keys(plsSet).filter(function(p){return p&&p.length>1&&!/^\d+$/.test(p);}).sort();
   window._myTeamName=myTeam;MY_TEAM=(myTeam||'').trim();
   initDashboard();
 }
