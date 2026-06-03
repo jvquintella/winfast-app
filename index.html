@@ -2312,9 +2312,21 @@ function processGames(rawRows){
     var uspTl=[{t:0,pts:0}],advTl=[{t:0,pts:0}];
     var qpts={};
 
+    // Mapa de normalizacao: nome do log (ex:"Arthur") -> nome do roster (ex:"Arthur C.")
+    // O log usa "#XX PrimeiroNome", o roster usa "PrimeiroNome Sobrenome."
+    var pnMap={};
+    (uspTeam.players||[]).forEach(function(p){
+      var pn=stripPfx(p.name);
+      pnMap[pn]=pn;  // match exato: "Arthur C." -> "Arthur C."
+      var first=(pn.split(/\s+/)[0]||'');
+      if(first&&!pnMap[first])pnMap[first]=pn;  // match por primeiro nome: "Arthur" -> "Arthur C."
+    });
+
     log.forEach(function(ev){
       var pts=ev.pts||0;if(pts<=0)return;
-      var pname=stripPfx(ev.player||'');
+      var raw=stripPfx(ev.player||'');
+      // Normalizar nome do log para nome do roster
+      var pname=pnMap[raw]||(pnMap[(raw.split(/\s+/)[0]||'')] )||raw;
       var qi=qIdx[ev.q]!==undefined?qIdx[ev.q]:0;
       var el=elapsedEv(ev);
       if((ev.team||'').trim()===uspTeamName.trim()){
