@@ -2349,7 +2349,30 @@ function processGames(rawRows){
         fg3m:fg3m,fg3a:fg3a,fg3pct:pctCalc(fg3m,fg3a),
         ftm:ftm,fta:fta,ftpct:pctCalc(ftm,fta),pir:pirCalc(p),pm:p.plusMinus||0};
       if(!PLRQPT[pn])PLRQPT[pn]={};
-      PLRQPT[pn][gidS]=qpts[pn]||[0,0,0,0];
+      // Corrigir qpts: LL (lances livres) muitas vezes nao aparecem no log com player
+      // atribuido, entao suplementamos a diferenca usando timePerQuarter do jogador
+      var qFromLog=(qpts[pn]||[0,0,0,0]).slice();
+      var logTotal=qFromLog.reduce(function(s,v){return s+v;},0);
+      var missing=Math.max(0,(p.pts||0)-logTotal);
+      if(missing>0){
+        var tpq=p.timePerQuarter||[];
+        var totalT=tpq.reduce(function(s,t){return s+(t||0);},0);
+        if(totalT>0){
+          // distribuir proporcionalmente ao tempo por quarto
+          var rem=missing;
+          var share=tpq.map(function(t){return Math.floor(missing*(t||0)/totalT);});
+          rem-=share.reduce(function(s,v){return s+v;},0);
+          // resto: dar ao quarto com maior fracao
+          var fracs=tpq.map(function(t,i){return {i:i,f:missing*(t||0)/totalT-share[i]};});
+          fracs.sort(function(a,b){return b.f-a.f;});
+          for(var ri=0;ri<rem;ri++)share[fracs[ri].i]++;
+          for(var qi2=0;qi2<4;qi2++)qFromLog[qi2]=(qFromLog[qi2]||0)+(share[qi2]||0);
+        } else {
+          // sem dados de tempo por quarto: somar tudo no Q1
+          qFromLog[0]+=missing;
+        }
+      }
+      PLRQPT[pn][gidS]=qFromLog;
     });
 
     // ── Longitudinal do time (TLG) ────────────────────────────────────────────
